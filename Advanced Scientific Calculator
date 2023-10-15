@@ -1,0 +1,110 @@
+import tkinter as tk
+import math
+import numpy as np
+from sympy import symbols, Eq, solve, diff
+
+class AdvancedCalculator(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Advanced Scientific Calculator")
+        self.geometry("600x800")
+
+        self.result_var = tk.StringVar()
+        self.create_display()
+        self.create_buttons()
+
+    def create_display(self):
+        display = tk.Entry(self, textvariable=self.result_var, font=('Helvetica', 20), bd=10, insertwidth=4, width=22,
+                            borderwidth=4, justify='right')
+        display.grid(row=0, column=0, columnspan=6)
+
+    def create_buttons(self):
+        button_labels = [
+            ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
+            ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
+            ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
+            ('0', 4, 0), ('.', 4, 1), ('=', 4, 2), ('+', 4, 3),
+            ('sin', 5, 0), ('cos', 5, 1), ('tan', 5, 2), ('^', 5, 3),
+            ('sqrt', 6, 0), ('log', 6, 1), ('(', 6, 2), (')', 6, 3),
+            ('C', 7, 0), ('exp', 7, 1), ('π', 7, 2), ('x^2', 7, 3),
+            ('x^3', 8, 0), ('1/x', 8, 1), ('e', 8, 2), ('|x|', 8, 3),
+            ('√x', 9, 0), ('x!', 9, 1), ('nPr', 9, 2), ('nCr', 9, 3),
+            ('log2', 10, 0), ('log10', 10, 1), ('Integrate', 10, 2), ('Diff', 10, 3)
+        ]
+
+        for (text, row, col) in button_labels:
+            button = tk.Button(self, text=text, font=('Helvetica', 20), padx=20, pady=20, command=lambda t=text: self.on_button_click(t))
+            button.grid(row=row, column=col)
+
+    def on_button_click(self, text):
+        if text == '=':
+            try:
+                result = str(eval(self.result_var.get()))
+                self.result_var.set(result)
+            except Exception:
+                self.result_var.set("Error")
+        elif text == 'C':
+            self.result_var.set("")
+        elif text == 'π':
+            self.result_var.set(self.result_var.get() + str(math.pi))
+        elif text == 'x^2':
+            expression = self.result_var.get()
+            self.result_var.set(f'({expression})^2')
+        elif text == 'x^3':
+            expression = self.result_var.get()
+            self.result_var.set(f'({expression})^3')
+        elif text == '1/x':
+            expression = self.result_var.get()
+            self.result_var.set(f'1/({expression})')
+        elif text == '|x|':
+            expression = self.result_var.get()
+            self.result_var.set(f'abs({expression})')
+        elif text == '√x':
+            expression = self.result_var.get()
+            self.result_var.set(f'sqrt({expression})')
+        elif text == 'x!':
+            expression = self.result_var.get()
+            self.result_var.set(f'factorial({expression})')
+        elif text == 'nPr':
+            expression = self.result_var.get()
+            self.result_var.set(f'nPr({expression})')
+        elif text == 'nCr':
+            expression = self.result_var.get()
+            self.result_var.set(f'nCr({expression})')
+        elif text == 'log2':
+            expression = self.result_var.get()
+            self.result_var.set(f'log2({expression})')
+        elif text == 'log10':
+            expression = self.result_var.get()
+            self.result_var.set(f'log10({expression})')
+        elif text == 'Integrate':
+            expression = self.result_var.get()
+            result = self.integrate_expression(expression)
+            self.result_var.set(result)
+        elif text == 'Diff':
+            expression = self.result_var.get()
+            result = self.differentiate_expression(expression)
+            self.result_var.set(result)
+        else:
+            current_text = self.result_var.get()
+            self.result_var.set(current_text + text)
+
+    def integrate_expression(self, expression):
+        x = symbols('x')
+        try:
+            integral = math.floor(integrate(expression, x))
+            return str(integral)
+        except Exception:
+            return "Error"
+
+    def differentiate_expression(self, expression):
+        x = symbols('x')
+        try:
+            derivative = diff(expression, x)
+            return str(derivative)
+        except Exception:
+            return "Error"
+
+if __name__ == '__main__':
+    app = AdvancedCalculator()
+    app.mainloop()
